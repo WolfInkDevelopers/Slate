@@ -1,0 +1,1289 @@
+<div id="guide-x" class="guide-line horizontal"></div>
+<div id="guide-y" class="guide-line vertical"></div>
+
+
+<header
+  class="h-[58px] ios-glass flex items-center justify-between px-6 select-none z-50 shrink-0">
+
+  <div class="flex items-center gap-4 w-1/4">
+    <div class="flex gap-1.5">
+      <span class="w-[10px] h-[10px] rounded-full bg-[#ff5f56]"></span>
+      <span class="w-[10px] h-[10px] rounded-full bg-[#ffbd2e]"></span>
+      <span class="w-[10px] h-[10px] rounded-full bg-[#27c93f]"></span>
+    </div>
+    <div class="h-4 w-[1px] bg-white/10"></div>
+    <div class="flex items-center gap-2">
+      <i class="fa-solid fa-circle-nodes text-white text-[13px]"></i>
+      <div class="flex flex-col leading-none">
+        <span class="header-logo text-white">Slate</span>
+        <span class="header-logo-sub" id="active-project-title">Spatial
+          Research</span>
+      </div>
+    </div>
+  </div>
+
+
+  <div
+    class="flex items-center gap-2 bg-black/30 p-1 rounded-full border border-white/5">
+    <button id="tab-canvas" class="nav-tab active">
+      <i class="fa-solid fa-compass mr-1.5"></i>Lienzo
+    </button>
+    <button id="tab-hub" class="nav-tab">
+      <i class="fa-solid fa-folder-open mr-1.5"></i>Canvases
+    </button>
+  </div>
+
+
+  <div id="canvas-actions" class="w-1/4 flex items-center justify-end gap-2">
+    <button id="add-text" class="btn-header-create">
+      <i class="fa-solid fa-plus text-[8px]"></i> Nota
+    </button>
+    <button id="add-image" class="btn-header-create">
+      <i class="fa-solid fa-image text-[8px]"></i> Imagen
+    </button>
+    <div class="h-4 w-[1px] bg-white/10 mx-1"></div>
+    <button id="import-btn" class="btn-header-create"
+      title="Importar archivo .slate">
+      <i class="fa-solid fa-file-import text-[9px]"></i>
+    </button>
+    <button id="export-btn" class="btn-header-create"
+      title="Exportar proyecto .slate">
+      <i class="fa-solid fa-file-export text-[9px]"></i>
+    </button>
+    <input type="file" id="import-file-input" accept=".slate" class="hidden">
+  </div>
+  <div id="hub-actions-spacer" class="w-1/4 hidden"></div>
+</header>
+
+
+<div class="flex-1 flex overflow-hidden relative">
+
+
+  <aside id="sidebar"
+    class="w-[220px] border-r border-white/5 flex flex-col justify-between p-4 bg-black/20 z-40 shrink-0">
+    <div class="flex flex-col gap-5 h-full">
+      <div class="flex flex-col gap-2 flex-1 overflow-y-auto pr-1">
+        <span
+          class="text-[9px] font-bold text-white/20 uppercase tracking-widest px-1">Tus
+          Canvases</span>
+        <div id="projects-list" class="flex flex-col gap-1.5">
+
+        </div>
+      </div>
+    </div>
+  </aside>
+
+
+  <div id="canvas-area"
+    class="flex-1 relative overflow-hidden bg-[#050507] cursor-grab active:cursor-grabbing">
+    <div id="infinite-grid"></div>
+
+    <div class="ambient-glow w-[30%] h-[30%] bg-white/5 top-[-10%] left-[-10%]">
+    </div>
+    <div
+      class="ambient-glow w-[35%] h-[35%] bg-blue-500/[0.03] bottom-[-10%] right-[-10%]">
+    </div>
+
+    <div id="canvas-viewport"
+      class="absolute inset-0 origin-top-left pointer-events-none">
+      <svg id="connections-svg">
+        <g id="connections-group"></g>
+      </svg>
+      <div id="blocks-container" class="absolute inset-0 pointer-events-auto">
+      </div>
+    </div>
+
+
+    <div id="canvas-empty-state"
+      class="absolute inset-0 flex flex-col items-center justify-center text-center p-8 z-30 bg-[#050507] hidden">
+      <div
+        class="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center text-white/30 mb-6 border border-white/5 shadow-inner">
+        <i class="fa-solid fa-compass text-2xl"></i>
+      </div>
+      <h2 class="title-serif text-2xl font-light text-white mb-2">Comienza tu
+        espacio mental</h2>
+      <p class="text-[12px] text-white/40 max-w-[320px] leading-relaxed mb-6">
+        Crea tu primer canvas infinito para organizar notas, conceptos e
+        imágenes interconectadas.</p>
+      <button id="empty-state-create-btn"
+        class="px-6 py-2.5 bg-white text-black text-xs font-bold rounded-lg hover:bg-neutral-200 active:scale-95 transition-all">
+        Crear Primer Canvas
+      </button>
+    </div>
+
+
+    <div id="canvas-controls"
+      class="absolute bottom-5 right-5 glass-card rounded-lg px-3 py-1.5 flex items-center gap-4 text-[11px] font-mono text-white/40 z-30 pointer-events-auto select-none">
+      <div>Zoom: <span id="zoom-indicator">100%</span></div>
+      <div class="h-3 w-[1px] bg-white/10"></div>
+      <button id="reset-view-btn"
+        class="hover:text-white transition-colors">Reset View</button>
+    </div>
+
+    <div id="canvas-shortcuts"
+      class="absolute bottom-5 left-5 text-[10px] text-white/20 font-mono z-30 pointer-events-none flex flex-col gap-1">
+      <span>Arrastra con clic sobre el fondo para moverte.</span>
+      <span>Usa la rueda del ratón para hacer Zoom.</span>
+    </div>
+  </div>
+
+
+  <div id="projects-hub"
+    class="hidden flex-1 overflow-y-auto p-12 bg-[#050507] z-40 select-none">
+    <div class="max-w-5xl mx-auto flex flex-col gap-10">
+      <div class="flex flex-col gap-2">
+        <h1 class="title-serif text-4xl font-light text-white tracking-tight">
+          Estudio de Canvases</h1>
+        <p
+          class="text-[11px] font-mono text-white/30 uppercase tracking-widest">
+          Administra y crea tus espacios de investigación espacial</p>
+      </div>
+
+
+      <div id="hub-grid"
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+        <div id="hub-create-card"
+          class="glass-card rounded-[18px] p-8 flex flex-col items-center justify-center text-center gap-4 cursor-pointer hover:border-white/20 hover:bg-white/[0.02] border-dashed border-2 border-white/10 min-h-[190px] transition-all">
+          <div
+            class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-white/60">
+            <i class="fa-solid fa-plus text-lg"></i>
+          </div>
+          <div class="flex flex-col gap-1">
+            <h3 class="font-medium text-[15px] text-white">Nuevo Canvas</h3>
+            <p class="text-[11px] text-white/30 font-light">Crea un espacio de
+              investigación espacial vacío</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<div id="monolith-overlay"
+  class="fixed inset-0 z-[100] bg-[#030305]/98 opacity-0 pointer-events-none transition-all duration-350 flex items-center justify-center select-none">
+  <div
+    class="max-w-[680px] w-[90%] flex flex-col gap-6 p-10 glass-card rounded-[20px] shadow-2xl relative">
+    <button id="monolith-close-btn"
+      class="absolute top-6 right-6 text-white/30 hover:text-white transition-colors text-base"
+      title="Salir del modo concentración">
+      <i class="fa-solid fa-compress"></i>
+    </button>
+    <div
+      class="flex items-center justify-between text-white/20 text-[9px] tracking-widest font-bold border-b border-white/5 pb-4">
+      <span>MODO MONOLITH</span>
+      <span>ESCRITURA PURA</span>
+    </div>
+
+    <input id="monolith-tag-input"
+      class="bg-transparent text-xs text-white/40 tracking-wider font-mono outline-none border-b border-transparent focus:border-white/10 pb-1 w-fit"
+      placeholder="ETIQUETA">
+    <input id="monolith-title-input"
+      class="bg-transparent text-[32px] font-light text-white leading-tight outline-none title-serif w-full"
+      placeholder="Título de la idea">
+    <textarea id="monolith-content-input"
+      class="bg-transparent text-[14px] text-white/50 leading-relaxed font-light outline-none h-[220px] resize-none w-full"
+      placeholder="Escribe tus notas de investigación ininterrumpidamente..."></textarea>
+
+    <div
+      class="text-[10px] text-white/20 font-mono flex items-center justify-between pt-4 border-t border-white/5 mt-2">
+      <span>Se guarda automáticamente de forma local.</span>
+      <span id="monolith-word-count">0 palabras</span>
+    </div>
+  </div>
+</div>
+
+
+<div id="rename-modal"
+  class="fixed inset-0 z-[110] bg-black/85 backdrop-blur-sm opacity-0 pointer-events-none transition-all duration-300 flex items-center justify-center select-none">
+  <div
+    class="glass-card p-6 rounded-[16px] w-[360px] flex flex-col gap-4 border border-white/10 shadow-2xl">
+    <h3 class="title-serif text-lg text-white">Renombrar Canvas</h3>
+    <input id="rename-input" type="text"
+      class="bg-white/5 border border-white/10 rounded-lg p-2.5 text-sm text-white focus:outline-none focus:border-white/25 font-mono w-full"
+      placeholder="Nombre del canvas">
+    <div class="flex justify-end gap-2 text-xs font-semibold">
+      <button id="rename-cancel-btn"
+        class="px-4 py-2 hover:bg-white/5 rounded-lg text-white/50 hover:text-white transition-colors">Cancelar</button>
+      <button id="rename-save-btn"
+        class="px-4 py-2 bg-white text-black rounded-lg hover:bg-neutral-200 active:scale-95 transition-all">Guardar</button>
+    </div>
+  </div>
+</div>
+
+
+<script>
+  // Funciones de codificación/decodificación ultra robustas para UTF-8 y formatos de archivo
+  function safeBtoA(str) {
+      try { return btoa(encodeURIComponent(str || '')); } catch(e) { return ''; }
+  }
+  function safeAtoB(str) {
+      try { return decodeURIComponent(atob(str || '')); } catch(e) { return str || ''; }
+  }
+  
+  // =========================================================================
+  // MOTOR DE SERIALIZACIÓN EXCLUSIVO (.slate)
+  // =========================================================================
+  function serializeSlate(projectName, blocks, connections) {
+      let output = `### SLATE PHYSICAL STRUCTURE PROTOCOL v2.0 ###\n`;
+      output += `METADATA::NAME::${safeBtoA(projectName)}\n`;
+      output += `METADATA::EXPORT_DATE::${new Date().toISOString()}\n`;
+      output += `METADATA::ENGINE_HASH::${Math.random().toString(36).substring(2, 10).toUpperCase()}\n\n`;
+      
+      output += `### START ENTITY LAYERS (BLOCKS) ###\n`;
+      blocks.forEach(b => {
+          output += `BLOCK_ID::${b.id}\n`;
+          output += `  TYPE::${b.type}\n`;
+          output += `  COLOR::${b.color}\n`;
+          output += `  COORD_X::${b.left}\n`;
+          output += `  COORD_Y::${b.top}\n`;
+          output += `  METATAG::${safeBtoA(b.tag)}\n`;
+          output += `  HEADLINE::${safeBtoA(b.title)}\n`;
+          output += `  MARKDOWN_BODY::${safeBtoA(b.content)}\n`;
+          output += `  BINARY_RESOURCE::${b.image ? b.image : 'NULL_RESOURCE'}\n`;
+          output += `END_BLOCK\n\n`;
+      });
+      output += `### END ENTITY LAYERS ###\n\n`;
+      
+      output += `### START LOGICAL MAPPINGS (CONNECTIONS) ###\n`;
+      connections.forEach(c => {
+          output += `MAP_EDGE::${c.from}==>>${c.to}\n`;
+      });
+      output += `### END LOGICAL MAPPINGS ###\n`;
+      
+      return output;
+  }
+  
+  function deserializeSlate(rawText) {
+      const lines = rawText.split(/\r?\n/);
+      let projectName = "Imported Project";
+      let blocks = [];
+      let connections = [];
+      let currentBlock = null;
+      
+      for (let line of lines) {
+          line = line.trim();
+          if (!line || line.startsWith('###')) continue;
+          
+          if (line.startsWith('METADATA::NAME::')) {
+              const encoded = line.replace('METADATA::NAME::', '').trim();
+              projectName = safeAtoB(encoded) || "Imported Project";
+              continue;
+          }
+          if (line.startsWith('METADATA::')) {
+              continue;
+          }
+          
+          if (line.startsWith('BLOCK_ID::')) {
+              const id = line.replace('BLOCK_ID::', '').trim();
+              currentBlock = {
+                  id: id,
+                  type: 'text',
+                  color: 'color-white',
+                  left: 100,
+                  top: 100,
+                  tag: '',
+                  title: '',
+                  content: '',
+                  image: ''
+              };
+              continue;
+          }
+          
+          if (line === 'END_BLOCK') {
+              if (currentBlock) {
+                  blocks.push(currentBlock);
+                  currentBlock = null;
+              }
+              continue;
+          }
+          
+          if (line.startsWith('MAP_EDGE::')) {
+              const mapping = line.replace('MAP_EDGE::', '').trim();
+              const parts = mapping.split('==>>');
+              if (parts.length === 2) {
+                  connections.push({ from: parts[0].trim(), to: parts[1].trim() });
+              }
+              continue;
+          }
+          
+          if (currentBlock) {
+              const sepIndex = line.indexOf('::');
+              if (sepIndex !== -1) {
+                  const key = line.substring(0, sepIndex).trim();
+                  const val = line.substring(sepIndex + 2).trim();
+                  
+                  switch(key) {
+                      case 'TYPE': currentBlock.type = val; break;
+                      case 'COLOR': currentBlock.color = val; break;
+                      case 'COORD_X': currentBlock.left = parseFloat(val) || 100; break;
+                      case 'COORD_Y': currentBlock.top = parseFloat(val) || 100; break;
+                      case 'METATAG': currentBlock.tag = safeAtoB(val); break;
+                      case 'HEADLINE': currentBlock.title = safeAtoB(val); break;
+                      case 'MARKDOWN_BODY': currentBlock.content = safeAtoB(val); break;
+                      case 'BINARY_RESOURCE': currentBlock.image = (val === 'NULL_RESOURCE') ? '' : val; break;
+                  }
+              }
+          }
+      }
+      return { projectName, blocks, connections };
+  }
+  
+  // =========================================================================
+  // ESTADOS DE LA APLICACIÓN
+  // =========================================================================
+  const canvasArea = document.getElementById('canvas-area');
+  const viewport = document.getElementById('canvas-viewport');
+  const blocksContainer = document.getElementById('blocks-container');
+  const svgGroup = document.getElementById('connections-group');
+  const projectsListEl = document.getElementById('projects-list');
+  const activeProjectTitleEl = document.getElementById('active-project-title');
+  const zoomIndicator = document.getElementById('zoom-indicator');
+  const sidebar = document.getElementById('sidebar');
+  const projectsHub = document.getElementById('projects-hub');
+  const hubGrid = document.getElementById('hub-grid');
+  const canvasActions = document.getElementById('canvas-actions');
+  const hubActionsSpacer = document.getElementById('hub-actions-spacer');
+  
+  const canvasEmptyState = document.getElementById('canvas-empty-state');
+  const emptyStateCreateBtn = document.getElementById('empty-state-create-btn');
+  const canvasControls = document.getElementById('canvas-controls');
+  const canvasShortcuts = document.getElementById('canvas-shortcuts');
+  
+  const guideX = document.getElementById('guide-x');
+  const guideY = document.getElementById('guide-y');
+  
+  const colors = ['color-white', 'color-blue', 'color-green', 'color-purple', 'color-amber', 'color-crimson'];
+  const SNAP_LIMIT = 15;
+  
+  // Versión limpia 'v6' para forzar que empiece 100% vacío
+  let projectsIndex = [];
+  let currentProjectId = '';
+  let activeProjectData = { blocks: [], connections: [] };
+  
+  // Navegación Espacial
+  let panX = window.innerWidth / 2 - 120; 
+  let panY = window.innerHeight / 2 - 150;
+  let zoom = 1.0;
+  
+  let isPanning = false;
+  let panStartX = 0, panStartY = 0;
+  
+  let activeBlock = null;
+  let isDraggingBlock = false;
+  let dragStartX = 0, dragStartY = 0;
+  let blockInitialLeft = 0, blockInitialTop = 0;
+  
+  let linkingSourceId = null;
+  let activeMonolithBlockId = null;
+  
+  // Variables del Modal de renombrado
+  let projectRenamingId = null;
+  
+  // =========================================================================
+  // INICIALIZACIÓN (100% LIMPIO AL ABRIR)
+  // =========================================================================
+  function init() {
+      // Namespace 'v6' para asegurar un inicio vacío de demostraciones previas
+      const indexSaved = localStorage.getItem('slate_index_v6');
+      
+      if (indexSaved) {
+          projectsIndex = JSON.parse(indexSaved);
+          currentProjectId = localStorage.getItem('slate_current_project_v6') || '';
+          if (projectsIndex.length > 0 && (!currentProjectId || !projectsIndex.some(p => p.id === currentProjectId))) {
+              currentProjectId = projectsIndex[0].id;
+          }
+      } else {
+          // Empezar absolutamente en Cero
+          projectsIndex = [];
+          currentProjectId = '';
+          localStorage.setItem('slate_index_v6', JSON.stringify([]));
+          localStorage.setItem('slate_current_project_v6', '');
+      }
+  
+      if (currentProjectId) {
+          loadProject(currentProjectId);
+      } else {
+          checkEmptyState();
+      }
+  
+      updateCanvasTransform();
+      setupMonolithListeners();
+      setupRenameModalListeners();
+      
+      if (emptyStateCreateBtn) {
+          emptyStateCreateBtn.addEventListener('click', createNewCanvas);
+      }
+  }
+  
+  function checkEmptyState() {
+      if (projectsIndex.length === 0) {
+          canvasEmptyState.classList.remove('hidden');
+          canvasControls.classList.add('hidden');
+          canvasShortcuts.classList.add('hidden');
+          
+          // Deshabilitar botones de creación
+          document.getElementById('add-text').disabled = true;
+          document.getElementById('add-image').disabled = true;
+          document.getElementById('export-btn').disabled = true;
+          
+          sidebar.classList.add('opacity-30', 'pointer-events-none');
+          
+          blocksContainer.innerHTML = '';
+          svgGroup.innerHTML = '';
+      } else {
+          canvasEmptyState.classList.add('hidden');
+          canvasControls.classList.remove('hidden');
+          canvasShortcuts.classList.remove('hidden');
+          
+          document.getElementById('add-text').disabled = false;
+          document.getElementById('add-image').disabled = false;
+          document.getElementById('export-btn').disabled = false;
+          
+          sidebar.classList.remove('opacity-30', 'pointer-events-none');
+      }
+  }
+  
+  function saveIndex() {
+      localStorage.setItem('slate_index_v6', JSON.stringify(projectsIndex));
+      renderSidebar();
+      renderProjectsHub();
+      checkEmptyState();
+  }
+  
+  function saveCurrentProjectData() {
+      if (!currentProjectId) return;
+      const currentProj = projectsIndex.find(p => p.id === currentProjectId);
+      const name = currentProj ? currentProj.name : "Untitled Canvas";
+      const serialized = serializeSlate(name, activeProjectData.blocks, activeProjectData.connections);
+      localStorage.setItem(`slate_data_v6_${currentProjectId}`, serialized);
+      renderProjectsHub();
+  }
+  
+  function loadProject(id) {
+      linkingSourceId = null;
+      activeBlock = null;
+      isDraggingBlock = false;
+      guideX.style.opacity = '0';
+      guideY.style.opacity = '0';
+  
+      currentProjectId = id;
+      localStorage.setItem('slate_current_project_v6', id);
+      
+      const raw = localStorage.getItem(`slate_data_v6_${id}`);
+      if (raw) {
+          activeProjectData = deserializeSlate(raw);
+      } else {
+          activeProjectData = { blocks: [], connections: [] };
+      }
+  
+      renderAllBlocks();
+      renderSidebar();
+      renderProjectsHub();
+      checkEmptyState();
+  
+      // Centrar cámara limpiamente en el lienzo
+      panX = window.innerWidth / 2 - 120;
+      panY = window.innerHeight / 2 - 150;
+      zoom = 1.0;
+      updateCanvasTransform();
+  }
+  
+  // =========================================================================
+  // PANEADO Y ZOOM INFINITOS
+  // =========================================================================
+  function updateCanvasTransform() {
+      viewport.style.transform = `translate(${panX}px, ${panY}px) scale(${zoom})`;
+      zoomIndicator.innerText = `${Math.round(zoom * 100)}%`;
+      
+      const grid = document.getElementById('infinite-grid');
+      grid.style.backgroundPosition = `${panX}px ${panY}px`;
+      grid.style.backgroundSize = `${20 * zoom}px ${20 * zoom}px`;
+  
+      drawConnections();
+  }
+  
+  canvasArea.addEventListener('pointerdown', (e) => {
+      if (e.target.closest('.block') || e.target.closest('button') || e.target.closest('input') || projectsIndex.length === 0) return;
+      isPanning = true;
+      panStartX = e.clientX - panX;
+      panStartY = e.clientY - panY;
+      canvasArea.setPointerCapture(e.pointerId);
+      canvasArea.style.cursor = 'grabbing';
+  });
+  
+  canvasArea.addEventListener('pointermove', (e) => {
+      if (!isPanning) return;
+      panX = e.clientX - panStartX;
+      panY = e.clientY - panY;
+      updateCanvasTransform();
+  });
+  
+  canvasArea.addEventListener('pointerup', (e) => {
+      if (!isPanning) return;
+      isPanning = false;
+      canvasArea.releasePointerCapture(e.pointerId);
+      canvasArea.style.cursor = 'grab';
+  });
+  
+  canvasArea.addEventListener('wheel', (e) => {
+      if (projectsIndex.length === 0) return;
+      e.preventDefault();
+      const zoomFactor = 1.08;
+      const oldZoom = zoom;
+      
+      if (e.deltaY < 0) {
+          zoom = Math.min(3.0, zoom * zoomFactor);
+      } else {
+          zoom = Math.max(0.15, zoom / zoomFactor);
+      }
+  
+      const rect = canvasArea.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const mouseY = e.clientY - rect.top;
+  
+      panX = mouseX - (mouseX - panX) * (zoom / oldZoom);
+      panY = mouseY - (mouseY - panY) * (zoom / oldZoom);
+  
+      updateCanvasTransform();
+  }, { passive: false });
+  
+  document.getElementById('reset-view-btn').addEventListener('click', () => {
+      zoom = 1.0;
+      panX = window.innerWidth / 2 - 120;
+      panY = window.innerHeight / 2 - 150;
+      updateCanvasTransform();
+  });
+  
+  // =========================================================================
+  // GESTIÓN DE NAVEGACIÓN POR PESTAÑAS
+  // =========================================================================
+  const tabCanvas = document.getElementById('tab-canvas');
+  const tabHub = document.getElementById('tab-hub');
+  
+  function switchTab(target) {
+      if (target === 'canvas') {
+          tabCanvas.classList.add('active');
+          tabHub.classList.remove('active');
+          
+          sidebar.classList.remove('hidden');
+          canvasArea.classList.remove('hidden');
+          projectsHub.classList.add('hidden');
+          
+          canvasActions.classList.remove('hidden');
+          hubActionsSpacer.classList.add('hidden');
+          
+          updateCanvasTransform();
+      } else {
+          tabHub.classList.add('active');
+          tabCanvas.classList.remove('active');
+          
+          sidebar.classList.add('hidden');
+          canvasArea.classList.add('hidden');
+          projectsHub.classList.remove('hidden');
+          
+          canvasActions.classList.add('hidden');
+          hubActionsSpacer.classList.remove('hidden');
+          
+          renderProjectsHub();
+      }
+  }
+  
+  tabCanvas.addEventListener('click', () => switchTab('canvas'));
+  tabHub.addEventListener('click', () => switchTab('hub'));
+  
+  // =========================================================================
+  // RENDER DE BLOQUES E INTERACCIÓN
+  // =========================================================================
+  function renderAllBlocks() {
+      blocksContainer.innerHTML = '';
+      activeProjectData.blocks.forEach(b => {
+          const el = createBlockDOM(b);
+          blocksContainer.appendChild(el);
+      });
+      drawConnections();
+  }
+  
+  function createBlockDOM(data) {
+      const block = document.createElement('div');
+      block.className = `block absolute w-[240px] glass-card p-4 rounded-[14px] flex flex-col gap-3 select-none transition-all duration-300 pointer-events-auto ${data.color || 'color-white'}`;
+      block.id = data.id;
+      block.style.left = `${data.left}px`;
+      block.style.top = `${data.top}px`;
+  
+      let mediaHTML = '';
+      if (data.type === 'image') {
+          const imgSource = data.image || 'https://images.unsplash.com/photo-1501854140801-50d01698950b?auto=format&fit=crop&w=600&q=80';
+          mediaHTML = `
+              <div class="block-image-container w-full aspect-[4/3] rounded-[8px] overflow-hidden border border-white/5 relative bg-black/40">
+                  <img class="w-full h-full object-cover" src="${imgSource}" alt="Medios">
+              </div>
+          `;
+      }
+  
+      block.innerHTML = `
+          <div class="flex items-center justify-between pb-2 border-b border-white/5 pointer-events-none">
+              <span class="block-tag text-[9px] font-bold bg-white/5 text-white/50 px-2 py-0.5 rounded cursor-text pointer-events-auto" contenteditable="true">${data.tag}</span>
+              <span class="w-1.5 h-1.5 rounded-full bg-white/20"></span>
+          </div>
+          ${mediaHTML}
+          <h4 class="block-title font-medium text-[13.5px] leading-tight text-white cursor-text" contenteditable="true">${data.title}</h4>
+          <p class="block-content text-[11px] font-light text-white/40 leading-relaxed cursor-text" contenteditable="true">${data.content}</p>
+          
+          <div class="flex items-center justify-between pt-2 border-t border-white/5 mt-1 select-none pointer-events-auto">
+              <div class="flex gap-2">
+                  <button class="btn-block-action btn-color text-white/30 hover:text-white text-[10px]" title="Cambiar color">
+                      <i class="fa-solid fa-palette"></i>
+                  </button>
+                  ${data.type === 'image' ? `
+                      <button class="btn-block-action btn-upload text-white/30 hover:text-white text-[10px]" title="Modificar recurso">
+                          <i class="fa-solid fa-cloud-arrow-up"></i>
+                      </button>
+                      <input type="file" class="block-file-input hidden" accept="image/*">
+                  ` : ''}
+                  <button class="btn-block-action btn-link text-white/30 hover:text-white text-[10px]" title="Establecer enlace">
+                      <i class="fa-solid fa-link"></i>
+                  </button>
+                  <button class="btn-block-action btn-delete text-white/30 hover:text-red-400 text-[10px]" title="Eliminar">
+                      <i class="fa-solid fa-trash-can"></i>
+                  </button>
+              </div>
+              <div>
+                  <button class="btn-block-action btn-enter-monolith text-white/30 hover:text-white text-[10px]" title="Enfoque Monolith">
+                      <i class="fa-solid fa-expand"></i>
+                  </button>
+              </div>
+          </div>
+      `;
+  
+      bindBlockInteractions(block);
+      return block;
+  }
+  
+  function bindBlockInteractions(block) {
+      block.addEventListener('pointerdown', (e) => {
+          if (e.target.closest('.btn-block-action') || e.target.isContentEditable) return;
+  
+          activeBlock = block;
+          isDraggingBlock = true;
+          block.classList.add('dragging');
+          block.setPointerCapture(e.pointerId);
+  
+          dragStartX = e.clientX;
+          dragStartY = e.clientY;
+          blockInitialLeft = parseFloat(block.style.left) || 0;
+          blockInitialTop = parseFloat(block.style.top) || 0;
+  
+          document.querySelectorAll('.block').forEach(b => b.style.zIndex = 10);
+          block.style.zIndex = 100;
+      });
+  
+      block.addEventListener('pointermove', (e) => {
+          if (!isDraggingBlock || activeBlock !== block) return;
+  
+          const dx = (e.clientX - dragStartX) / zoom;
+          const dy = (e.clientY - dragStartY) / zoom;
+  
+          let targetLeft = blockInitialLeft + dx;
+          let targetTop = blockInitialTop + dy;
+  
+          let snapXVal = null;
+          let snapYVal = null;
+          const siblings = Array.from(document.querySelectorAll('.block')).filter(b => b !== block);
+  
+          for (let other of siblings) {
+              const oLeft = parseFloat(other.style.left) || 0;
+              const oTop = parseFloat(other.style.top) || 0;
+  
+              if (Math.abs(targetLeft - oLeft) < SNAP_LIMIT) {
+                  targetLeft = oLeft;
+                  snapXVal = oLeft;
+              }
+              if (Math.abs(targetTop - oTop) < SNAP_LIMIT) {
+                  targetTop = oTop;
+                  snapYVal = oTop;
+              }
+          }
+  
+          if (snapXVal !== null) {
+              guideY.style.left = `${snapXVal * zoom + panX}px`;
+              guideY.style.opacity = '0.25';
+          } else {
+              guideY.style.opacity = '0';
+          }
+  
+          if (snapYVal !== null) {
+              guideX.style.top = `${snapYVal * zoom + panY}px`;
+              guideX.style.opacity = '0.25';
+          } else {
+              guideX.style.opacity = '0';
+          }
+  
+          block.style.left = `${targetLeft}px`;
+          block.style.top = `${targetTop}px`;
+  
+          const data = activeProjectData.blocks.find(b => b.id === block.id);
+          if (data) {
+              data.left = Math.round(targetLeft);
+              data.top = Math.round(targetTop);
+          }
+  
+          drawConnections();
+      });
+  
+      block.addEventListener('pointerup', (e) => {
+          if (activeBlock !== block) return;
+          block.releasePointerCapture(e.pointerId);
+          block.classList.remove('dragging');
+          
+          guideX.style.opacity = '0';
+          guideY.style.opacity = '0';
+          
+          isDraggingBlock = false;
+          activeBlock = null;
+          saveCurrentProjectData(); // GUARDADO INMEDIATO POST DRAG
+      });
+  
+      const editables = block.querySelectorAll('[contenteditable="true"]');
+      editables.forEach(ed => {
+          ed.addEventListener('input', () => {
+              const data = activeProjectData.blocks.find(b => b.id === block.id);
+              if (!data) return;
+  
+              if (ed.classList.contains('block-tag')) data.tag = ed.innerText;
+              if (ed.classList.contains('block-title')) data.title = ed.innerText;
+              if (ed.classList.contains('block-content')) data.content = ed.innerText;
+  
+              saveCurrentProjectData(); // GUARDADO INMEDIATO POST EDICION
+              drawConnections();
+          });
+      });
+  
+      block.querySelector('.btn-color').addEventListener('click', () => {
+          const data = activeProjectData.blocks.find(b => b.id === block.id);
+          if (!data) return;
+  
+          let currentIdx = colors.indexOf(data.color || 'color-white');
+          let nextIdx = (currentIdx + 1) % colors.length;
+          let nextColor = colors[nextIdx];
+  
+          block.classList.remove(...colors);
+          block.classList.add(nextColor);
+          data.color = nextColor;
+  
+          saveCurrentProjectData(); // GUARDADO AL CAMBIAR COLOR
+      });
+  
+      const uploadBtn = block.querySelector('.btn-upload');
+      if (uploadBtn) {
+          const fileInput = block.querySelector('.block-file-input');
+          const imgEl = block.querySelector('.block-image-container img');
+  
+          uploadBtn.addEventListener('click', () => fileInput.click());
+          fileInput.addEventListener('change', (e) => {
+              const file = e.target.files[0];
+              if (file) {
+                  const reader = new FileReader();
+                  reader.onload = (evt) => {
+                      imgEl.src = evt.target.result;
+                      const data = activeProjectData.blocks.find(b => b.id === block.id);
+                      if (data) {
+                          data.image = evt.target.result;
+                          saveCurrentProjectData(); // GUARDADO AL CARGAR IMAGEN
+                      }
+                  };
+                  reader.readAsDataURL(file);
+              }
+          });
+      }
+  
+      block.querySelector('.btn-link').addEventListener('click', (e) => {
+          e.stopPropagation();
+          if (linkingSourceId === null) {
+              linkingSourceId = block.id;
+              block.querySelector('.btn-link').classList.add('text-blue-400');
+              block.querySelector('.btn-link').innerHTML = `<i class="fa-solid fa-circle-dot animate-pulse"></i>`;
+          } else if (linkingSourceId === block.id) {
+              linkingSourceId = null;
+              block.querySelector('.btn-link').classList.remove('text-blue-400');
+              block.querySelector('.btn-link').innerHTML = `<i class="fa-solid fa-link"></i>`;
+          } else {
+              const exists = activeProjectData.connections.some(c => 
+                  (c.from === linkingSourceId && c.to === block.id) || 
+                  (c.from === block.id && c.to === linkingSourceId)
+              );
+              
+              if (!exists) {
+                  activeProjectData.connections.push({ from: linkingSourceId, to: block.id });
+                  saveCurrentProjectData(); // GUARDADO AL CONECTAR
+                  drawConnections();
+              }
+  
+              const prevEl = document.getElementById(linkingSourceId);
+              if (prevEl) {
+                  const prevBtn = prevEl.querySelector('.btn-link');
+                  if (prevBtn) {
+                      prevBtn.classList.remove('text-blue-400');
+                      prevBtn.innerHTML = `<i class="fa-solid fa-link"></i>`;
+                  }
+              }
+              linkingSourceId = null;
+          }
+      });
+  
+      block.querySelector('.btn-delete').addEventListener('click', () => {
+          block.style.opacity = '0';
+          block.style.transform = 'scale(0.8)';
+          
+          activeProjectData.blocks = activeProjectData.blocks.filter(b => b.id !== block.id);
+          activeProjectData.connections = activeProjectData.connections.filter(c => c.from !== block.id && c.to !== block.id);
+          
+          saveCurrentProjectData(); // GUARDADO AL ELIMINAR BLOCK
+          setTimeout(() => {
+              block.remove();
+              drawConnections();
+          }, 300);
+      });
+  
+      block.querySelector('.btn-enter-monolith').addEventListener('click', () => {
+          openMonolith(block.id);
+      });
+  }
+  
+  // SVG de Enlaces
+  function drawConnections() {
+      svgGroup.innerHTML = '';
+      activeProjectData.connections.forEach(conn => {
+          const elA = document.getElementById(conn.from);
+          const elB = document.getElementById(conn.to);
+  
+          if (elA && elB) {
+              const rectA = elA.getBoundingClientRect();
+              const rectB = elB.getBoundingClientRect();
+  
+              const x1 = elA.offsetLeft + rectA.width / (2 * zoom);
+              const y1 = elA.offsetTop + rectA.height / (2 * zoom);
+              const x2 = elB.offsetLeft + rectB.width / (2 * zoom);
+              const y2 = elB.offsetTop + rectB.height / (2 * zoom);
+  
+              const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+              const dx = x2 - x1;
+              const dy = y2 - y1;
+              
+              const cx1 = x1 + dx * 0.25;
+              const cy1 = y1 + dy * 0.05;
+              const cx2 = x1 + dx * 0.75;
+              const cy2 = y2 - dy * 0.05;
+  
+              path.setAttribute('d', `M ${x1} ${y1} C ${cx1} ${cy1}, ${cx2} ${cy2}, ${x2} ${y2}`);
+              path.setAttribute('stroke', 'rgba(255, 255, 255, 0.25)');
+              path.setAttribute('stroke-width', `${1.5 / zoom}`);
+              path.setAttribute('stroke-dasharray', '4,4');
+              path.setAttribute('fill', 'none');
+  
+              svgGroup.appendChild(path);
+          }
+      });
+  }
+  
+  // =========================================================================
+  // EDITOR MONOLITH GLOBAL (FUERA DEL CANVAS)
+  // =========================================================================
+  const monolithOverlay = document.getElementById('monolith-overlay');
+  const monolithTagInput = document.getElementById('monolith-tag-input');
+  const monolithTitleInput = document.getElementById('monolith-title-input');
+  const monolithContentInput = document.getElementById('monolith-content-input');
+  const monolithWordCount = document.getElementById('monolith-word-count');
+  const monolithCloseBtn = document.getElementById('monolith-close-btn');
+  
+  function openMonolith(blockId) {
+      const data = activeProjectData.blocks.find(b => b.id === blockId);
+      if (!data) return;
+  
+      activeMonolithBlockId = blockId;
+      
+      monolithTagInput.value = data.tag || '';
+      monolithTitleInput.value = data.title || '';
+      monolithContentInput.value = data.content || '';
+      
+      updateWordCount(data.content);
+  
+      monolithOverlay.classList.remove('pointer-events-none');
+      monolithOverlay.style.opacity = '1';
+  }
+  
+  function closeMonolith() {
+      monolithOverlay.classList.add('pointer-events-none');
+      monolithOverlay.style.opacity = '0';
+      activeMonolithBlockId = null;
+  }
+  
+  function updateWordCount(text) {
+      const cleanText = (text || '').trim();
+      if (!cleanText) {
+          monolithWordCount.innerText = '0 palabras';
+          return;
+      }
+      const words = cleanText.split(/\s+/).filter(w => w.length > 0).length;
+      monolithWordCount.innerText = `${words} ${words === 1 ? 'palabra' : 'palabras'}`;
+  }
+  
+  function setupMonolithListeners() {
+      monolithCloseBtn.addEventListener('click', closeMonolith);
+  
+      const syncData = () => {
+          if (!activeMonolithBlockId) return;
+          const data = activeProjectData.blocks.find(b => b.id === activeMonolithBlockId);
+          if (!data) return;
+  
+          data.tag = monolithTagInput.value;
+          data.title = monolithTitleInput.value;
+          data.content = monolithContentInput.value;
+  
+          updateWordCount(data.content);
+  
+          const blockEl = document.getElementById(activeMonolithBlockId);
+          if (blockEl) {
+              const tagEl = blockEl.querySelector('.block-tag');
+              const titleEl = blockEl.querySelector('.block-title');
+              const contentEl = blockEl.querySelector('.block-content');
+              
+              if (tagEl) tagEl.innerText = data.tag;
+              if (titleEl) titleEl.innerText = data.title;
+              if (contentEl) contentEl.innerText = data.content;
+          }
+  
+          saveCurrentProjectData(); // PERSISTENCIA INSTANTÁNEA
+      };
+  
+      monolithTagInput.addEventListener('input', syncData);
+      monolithTitleInput.addEventListener('input', syncData);
+      monolithContentInput.addEventListener('input', syncData);
+  }
+  
+  // =========================================================================
+  // MODAL DE RENOMBRADO PREMIUM
+  // =========================================================================
+  const renameModal = document.getElementById('rename-modal');
+  const renameInput = document.getElementById('rename-input');
+  const renameCancelBtn = document.getElementById('rename-cancel-btn');
+  const renameSaveBtn = document.getElementById('rename-save-btn');
+  
+  function openRenameModal(projectId) {
+      const project = projectsIndex.find(p => p.id === projectId);
+      if (!project) return;
+  
+      projectRenamingId = projectId;
+      renameInput.value = project.name;
+      
+      renameModal.classList.remove('pointer-events-none');
+      renameModal.style.opacity = '1';
+      renameInput.focus();
+  }
+  
+  function closeRenameModal() {
+      renameModal.classList.add('pointer-events-none');
+      renameModal.style.opacity = '0';
+      projectRenamingId = null;
+  }
+  
+  function setupRenameModalListeners() {
+      renameCancelBtn.addEventListener('click', closeRenameModal);
+      
+      const processRename = () => {
+          if (!projectRenamingId) return;
+          const project = projectsIndex.find(p => p.id === projectRenamingId);
+          if (!project) return;
+  
+          const rawName = renameInput.value.trim();
+          const sanitizedName = rawName.replace(/[^a-zA-Z0-9_ -]/g, '_');
+  
+          if (sanitizedName) {
+              project.name = sanitizedName;
+              
+              // Si es el proyecto activo, actualizar los títulos correspondientes
+              if (projectRenamingId === currentProjectId) {
+                  if (activeProjectTitleEl) activeProjectTitleEl.innerText = `${sanitizedName}.slate`;
+                  activeProjectData.projectName = sanitizedName;
+              }
+  
+              // Guardar índice y actualizar el archivo físico local
+              saveIndex();
+              
+              const targetRaw = localStorage.getItem(`slate_data_v6_${projectRenamingId}`);
+              if (targetRaw) {
+                  const parsed = deserializeSlate(targetRaw);
+                  parsed.projectName = sanitizedName;
+                  const reSerialized = serializeSlate(sanitizedName, parsed.blocks, parsed.connections);
+                  localStorage.setItem(`slate_data_v6_${projectRenamingId}`, reSerialized);
+              }
+          }
+          closeRenameModal();
+      };
+  
+      renameSaveBtn.addEventListener('click', processRename);
+      renameInput.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') {
+              e.preventDefault();
+              processRename();
+          }
+      });
+  }
+  
+  // =========================================================================
+  // ESTUDIO DE CANVASES (PROYECTOS HUB)
+  // =========================================================================
+  function createNewCanvas() {
+      const id = `proj-${Date.now()}`;
+      const name = `Nuevo_Canvas_${projectsIndex.length + 1}`;
+      
+      projectsIndex.push({ id, name });
+      
+      // Guardar base vacía física en LocalStorage
+      const baseData = serializeSlate(name, [], []);
+      localStorage.setItem(`slate_data_v6_${id}`, baseData);
+      
+      saveIndex();
+      loadProject(id);
+      switchTab('canvas'); // Ir directamente al lienzo de trabajo
+  }
+  
+  function renderProjectsHub() {
+      const cards = Array.from(hubGrid.querySelectorAll('.glass-card')).filter(el => el.id !== 'hub-create-card');
+      cards.forEach(c => c.remove());
+  
+      projectsIndex.forEach(proj => {
+          const raw = localStorage.getItem(`slate_data_v6_${proj.id}`);
+          let blockCount = 0;
+          let connCount = 0;
+          if (raw) {
+              const parsed = deserializeSlate(raw);
+              blockCount = parsed.blocks.length;
+              connCount = parsed.connections.length;
+          }
+  
+          const card = document.createElement('div');
+          card.className = "glass-card rounded-[18px] p-6 flex flex-col justify-between gap-5 transition-all group min-h-[190px]";
+          
+          card.innerHTML = `
+              <div class="flex flex-col gap-1.5 w-full">
+                  <div class="flex items-center justify-between">
+                      <span class="text-[9px] font-mono text-white/30 uppercase tracking-widest">Slate Workspace</span>
+                      ${proj.id === currentProjectId ? `<span class="text-[9px] bg-white/10 text-white font-mono px-2 py-0.5 rounded-full">Activo</span>` : ''}
+                  </div>
+                  <h3 class="title-serif text-xl text-white group-hover:text-[#509ce6] transition-colors truncate w-full pointer-events-none">${proj.name}</h3>
+              </div>
+  
+              <div class="flex items-center gap-4 text-[11px] font-mono text-white/40">
+                  <div><i class="fa-regular fa-file-lines mr-1.5 opacity-50"></i>${blockCount} ${blockCount === 1 ? 'Nota' : 'Notas'}</div>
+                  <div><i class="fa-solid fa-link mr-1.5 opacity-50"></i>${connCount} ${connCount === 1 ? 'Enlace' : 'Enlaces'}</div>
+              </div>
+  
+              <div class="flex items-center justify-between border-t border-white/5 pt-4">
+                  <button class="btn-hub-open px-4 py-1.5 bg-white/5 hover:bg-white/10 rounded-lg text-xs font-semibold text-white/80 hover:text-white transition-all">
+                      Abrir Lienzo
+                  </button>
+                  <div class="flex items-center gap-1.5">
+                      <button class="btn-hub-rename p-2 hover:bg-white/5 rounded-lg text-white/40 hover:text-white transition-all" title="Renombrar Canvas">
+                          <i class="fa-solid fa-pen text-xs"></i>
+                      </button>
+                      <button class="btn-hub-export p-2 hover:bg-white/5 rounded-lg text-white/40 hover:text-white transition-all" title="Exportar .slate">
+                          <i class="fa-solid fa-file-export text-xs"></i>
+                      </button>
+                      <button class="btn-hub-delete p-2 hover:bg-red-950/20 rounded-lg text-white/20 hover:text-red-400 transition-all" title="Eliminar Canvas">
+                          <i class="fa-solid fa-trash-can text-xs"></i>
+                      </button>
+                  </div>
+              </div>
+          `;
+  
+          card.querySelector('.btn-hub-open').addEventListener('click', () => {
+              loadProject(proj.id);
+              switchTab('canvas');
+          });
+  
+          card.querySelector('.btn-hub-rename').addEventListener('click', () => {
+              openRenameModal(proj.id);
+          });
+  
+          card.querySelector('.btn-hub-export').addEventListener('click', () => {
+              const rawProj = localStorage.getItem(`slate_data_v6_${proj.id}`);
+              const parsed = rawProj ? deserializeSlate(rawProj) : { blocks: [], connections: [] };
+              const fileData = serializeSlate(proj.name, parsed.blocks, parsed.connections);
+              
+              const blob = new Blob([fileData], { type: 'text/plain;charset=utf-8' });
+              const url = URL.createObjectURL(blob);
+              
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = `${proj.name}.slate`;
+              a.click();
+              URL.revokeObjectURL(url);
+          });
+  
+          card.querySelector('.btn-hub-delete').addEventListener('click', () => {
+              if (confirm(`¿Estás seguro de que deseas destruir permanentemente el canvas "${proj.name}"?`)) {
+                  localStorage.removeItem(`slate_data_v6_${proj.id}`);
+                  projectsIndex = projectsIndex.filter(p => p.id !== proj.id);
+                  
+                  if (proj.id === currentProjectId) {
+                      if (projectsIndex.length > 0) {
+                          currentProjectId = projectsIndex[0].id;
+                          localStorage.setItem('slate_current_project_v6', currentProjectId);
+                          loadProject(currentProjectId);
+                      } else {
+                          currentProjectId = '';
+                          localStorage.setItem('slate_current_project_v6', '');
+                          activeProjectData = { blocks: [], connections: [] };
+                          if (activeProjectTitleEl) activeProjectTitleEl.innerText = "Sin_Canvas.slate";
+                      }
+                  }
+                  saveIndex();
+              }
+          });
+  
+          hubGrid.insertBefore(card, document.getElementById('hub-create-card'));
+      });
+  }
+  
+  document.getElementById('hub-create-card').addEventListener('click', createNewCanvas);
+  
+  // =========================================================================
+  // SIDEBAR Y LISTAS
+  // =========================================================================
+  function renderSidebar() {
+      projectsListEl.innerHTML = '';
+      
+      if (projectsIndex.length === 0) {
+          projectsListEl.innerHTML = `<div class="text-[11px] text-white/20 p-2 italic text-center select-none">Sin canvases</div>`;
+          if (activeProjectTitleEl) activeProjectTitleEl.innerText = "Sin_Canvas.slate";
+          return;
+      }
+  
+      projectsIndex.forEach(proj => {
+          const isActive = proj.id === currentProjectId;
+          const projEl = document.createElement('div');
+          projEl.className = `group flex items-center justify-between py-2 px-3 rounded-lg text-xs font-medium cursor-pointer transition-all ${
+              isActive ? 'bg-white/10 text-white' : 'text-white/40 hover:bg-white/5 hover:text-white/70'
+          }`;
+          
+          projEl.innerHTML = `
+              <div class="flex items-center gap-2 truncate flex-1 filename-label">
+                  <i class="fa-regular fa-file-lines text-[12px] opacity-60"></i>
+                  <span class="truncate pr-2">${proj.name}</span>
+              </div>
+          `;
+  
+          projEl.querySelector('.filename-label').addEventListener('click', () => {
+              if (proj.id !== currentProjectId) {
+                  loadProject(proj.id);
+                  switchTab('canvas');
+              }
+          });
+  
+          projectsListEl.appendChild(projEl);
+      });
+      
+      const currentProj = projectsIndex.find(p => p.id === currentProjectId);
+      if (activeProjectTitleEl) activeProjectTitleEl.innerText = currentProj ? `${currentProj.name}.slate` : 'Sin_Nombre.slate';
+  }
+  
+  // =========================================================================
+  // CREACIÓN DE NODOS EN LIENZO
+  // =========================================================================
+  function spawnBlock(type) {
+      if (!currentProjectId) return;
+      const id = `b_${Date.now()}`;
+  
+      const screenCenterX = window.innerWidth / 2;
+      const screenCenterY = window.innerHeight / 2;
+      const absoluteLeft = Math.round((screenCenterX - panX) / zoom - 120);
+      const absoluteTop = Math.round((screenCenterY - panY) / zoom - 100);
+  
+      const newBlock = {
+          id: id,
+          type: type,
+          color: 'color-white',
+          left: absoluteLeft,
+          top: absoluteTop,
+          tag: type === 'image' ? 'RECURSO' : 'IDEA',
+          title: 'Idea Nueva',
+          content: 'Haz doble clic para comenzar a estructurar tus notas de investigación.',
+          image: type === 'image' ? 'https://images.unsplash.com/photo-1518314916381-77a37c2a49ae?auto=format&fit=crop&w=600&q=80' : ''
+      };
+  
+      activeProjectData.blocks.push(newBlock);
+      saveCurrentProjectData(); // PERSISTENCIA INSTANTÁNEA
+  
+      const el = createBlockDOM(newBlock);
+      blocksContainer.appendChild(el);
+      
+      document.querySelectorAll('.block').forEach(b => b.style.zIndex = 10);
+      el.style.zIndex = 100;
+  }
+  
+  document.getElementById('add-text').addEventListener('click', () => spawnBlock('text'));
+  document.getElementById('add-image').addEventListener('click', () => spawnBlock('image'));
+  
+  // =========================================================================
+  // IMPORTACIÓN DIRECTA DE ARCHIVOS .slate
+  // =========================================================================
+  document.getElementById('export-btn').addEventListener('click', () => {
+      if (!currentProjectId) return;
+      const currentProj = projectsIndex.find(p => p.id === currentProjectId);
+      const name = currentProj ? currentProj.name : "Canvas_Slate";
+      const fileData = serializeSlate(name, activeProjectData.blocks, activeProjectData.connections);
+      
+      const blob = new Blob([fileData], { type: 'text/plain;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${name}.slate`;
+      a.click();
+      URL.revokeObjectURL(url);
+  });
+  
+  const importInput = document.getElementById('import-file-input');
+  document.getElementById('import-btn').addEventListener('click', () => importInput.click());
+  importInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+  
+      const reader = new FileReader();
+      reader.onload = (evt) => {
+          const rawText = evt.target.result;
+          if (!rawText.includes("### SLATE PHYSICAL STRUCTURE PROTOCOL")) {
+              alert("Error: El archivo no cumple con el formato estructurado nativo .slate");
+              return;
+          }
+  
+          const parsed = deserializeSlate(rawText);
+          const newId = `proj-${Date.now()}`;
+          
+          let targetName = parsed.projectName;
+          let counter = 1;
+          while (projectsIndex.some(p => p.name === targetName)) {
+              targetName = `${parsed.projectName}_${counter}`;
+              counter++;
+          }
+  
+          projectsIndex.push({ id: newId, name: targetName });
+          
+          const correctedRaw = serializeSlate(targetName, parsed.blocks, parsed.connections);
+          localStorage.setItem(`slate_data_v6_${newId}`, correctedRaw);
+          
+          saveIndex();
+          loadProject(newId);
+          switchTab('canvas');
+      };
+      reader.readAsText(file);
+      importInput.value = ''; // Resetear input
+  });
+  
+  window.addEventListener('resize', drawConnections);
+  
+  init();
+</script>
